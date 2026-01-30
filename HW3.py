@@ -2,11 +2,8 @@
 # Student ID: 53816807
 # Email: ashkap@umich.edu
 # Who or what you worked with on this homework (including generative AI like ChatGPT):
-# If you worked with generative AI also add a statement for how you used it.
-# e.g.:
-# Asked ChatGPT hints for debugging and suggesting the general structure of the code
-# Did your use of GenAI on this assignment align with your goals and guidelines in 
-#    your Gen AI contract? If not, why?
+# If you worked with generative AI also add a statement for how you used it. - I did not use generative AI
+
 
 import random
 import io
@@ -69,14 +66,16 @@ class CouponDispenser:
         """
         if len(self.coupon_cards) == 0:
             return "The box is empty."
+        
         elif name in self.customer_roster: 
-            index = self.customer_roster.index(name)
-            return f"That name already has a coupon: {self.coupon_cards[index]}"
+            roster_index = self.customer_roster.index(name)
+            coupon_index = self.issued_indices[roster_index]
+            return f"That name already has a coupon: {self.coupon_cards[coupon_index]}"
         else:
+            index_coupon = random.randint(0, len(self.coupon_cards) -1)
             self.customer_roster.append(name)
-            index_coupon = random.randint(0, len(self.coupon_cards))
             self.coupon_cards.append(self.coupon_cards[index_coupon])
-            return self.coupon_cards[index_coupon]
+            return self.issued_indices[index_coupon]
 
 
     def distribute_session(self):
@@ -97,29 +96,21 @@ class CouponDispenser:
         round_number = 1
         loop = True
         while loop == True:
-            user_input = input("Enter a customer name (or names), show or exit.")
+            user_input = input(f"Round {round_number} - Enter a customer name (or names), show or exit: ")
+
             if user_input == "exit":
+                print("Goodbye!")
                 loop = False
-                return "Goodbye!"
             elif user_input == "show":
-                for i in len(self.customer_roster):
-                    return f"{self.customer_roster[i]}: {self.coupon_cards[i]}"
+                for i in range(len(self.customer_roster)):
+                    print(f"{self.customer_roster[i]}: {self.coupon_cards[i]}")
             else:
                 pieces = user_input.split(",")
                 for piece in pieces:
-                    stripped_text = user_input.strip()
+                    stripped_text = piece.strip()
                     print(self.issue_coupon(stripped_text))
-                return 
+            round_number +=1
             
-            
-                    
-
-
-
-            
-
-
-
         
         pass
 
@@ -158,9 +149,9 @@ def main():
     ]
 
     # Uncomment the lines below as you implement each function.
-    # box = CouponDispenser(coupon_cards)
-    # box.distribute_session()
-    # box.tally_distribution()
+    box = CouponDispenser(coupon_cards)
+    box.distribute_session()
+    box.tally_distribution()
     pass
 
 
@@ -437,9 +428,4 @@ def test():
         check(False, f"tally_distribution in main: unexpected exception {e}")
 
     print(f"\nTests passed: {passed}/{total}")
-
-
-if __name__ == "__main__":
-    main()
-    # test()
 
